@@ -1,34 +1,67 @@
 # Kuse
 
-A lightweight shell tool to switch between multiple kubeconfig files organized in named subdirectories. After installation, simply drop each cluster’s kubeconfig into a folder under `~/.kube/configs/`, and use a single command to switch contexts.
+A lightweight, self-contained shell tool to switch between multiple Kubernetes kubeconfig files organized in named subdirectories. After installation, simply drop each cluster’s kubeconfig into a folder under `~/.kube/configs/`, and use a single command to switch contexts effortlessly.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+  - [System-wide Install (with sudo)](#system-wide-install-with-sudo)
+  - [Home-directory-only Install (no sudo)](#home-directory-only-install-no-sudo)
+- [Post-install Configuration](#post-install-configuration)
+- [Usage](#usage)
+  - [Example Folder Layout](#example-folder-layout)
+  - [Built-in Commands](#built-in-commands)
+- [Tab-Completion](#tab-completion)
+- [Troubleshooting](#troubleshooting)
+- [Uninstall](#uninstall)
+- [Defaults & Configuration](#defaults--configuration)
+- [Updating](#updating)
+- [License](#license)
+- [Contributing](#contributing)
 
 ---
 
 ## Features
 
-- **Easy context switching**  
-  `kuse <cluster>` sets your `KUBECONFIG` to the first `*.kubeconfig`, `*.yaml`, or `*.yml` file found in `~/.kube/configs/<cluster>`.  
-  `kuse default` clears `KUBECONFIG`, falling back to `~/.kube/config`.
+- **Easy Context Switching**  
+  - `kuse <cluster>` sets your `KUBECONFIG` to the first file matching `*.kubeconfig`, `*.yaml`, or `*.yml` inside `~/.kube/configs/<cluster>`.  
+  - `kuse default` clears `KUBECONFIG`, falling back to the standard `~/.kube/config` (or in-cluster defaults).
 
-- **Cluster inventory**  
-  - `kcs-list` shows all subdirectories under your kubeconfig root (default `~/.kube/configs`).  
-  - `kcs-current` displays which cluster (and exact file) is currently active.
+- **Cluster Inventory**  
+  - `kcs-list` lists all subdirectories under your kubeconfig root (default: `~/.kube/configs`).  
+  - `kcs-current` displays which cluster (and the exact file path) is currently active.
 
-- **Shell-native tab completion**  
-  Installs completion scripts for **Bash**, **Zsh**, and **Fish**. Typing `kuse <TAB>` will list `default` plus each folder name under your kubeconfig root.
+- **Shell-native Tab Completion**  
+  - Installs completion scripts for **Bash**, **Zsh**, and **Fish**. Typing `kuse <TAB>` will show `default` plus each folder name under your kubeconfig root.
 
-- **Persistent state**  
-  Remembers your last-used cluster in `~/.kcs_current`. New shells automatically restore that context.
+- **Persistent State**  
+  - Remembers your last-used cluster in `~/.kcs_current` so that new shells auto-restore that context.
 
-- **Automatic folder creation**  
-  The installer creates `~/.kube/configs` if it doesn’t already exist, so you can immediately drop kubeconfig files there.
+- **Automatic Folder Creation**  
+  - Installer automatically creates `~/.kube/configs` (or your custom root) if it doesn’t exist, so you can immediately drop your kubeconfig files there.
 
-- **Colored prompt by default**  
-  A helper script injects the active cluster name into your shell prompt in a unique 256-color hue.
+- **Colored Prompt by Default**  
+  - A helper script appends the active cluster name to your shell prompt in a uniquely hashed 256-color hue—no two clusters look the same.
 
-- **One-step installer (no Git required)**  
-  ```bash
-  curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
-  # Or, to install under your home directory (no sudo):
-  curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | bash -s -- --prefix="$HOME/.local"
+- **One-step Installer (No Git Required)**  
+  - Install system-wide with:
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
+    ```
+  - Or install under your home directory (no sudo):
+    ```bash
+    curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | bash -s -- --prefix="$HOME/.local"
+    ```
+
+---
+
+## Installation
+
+### System-wide Install (with sudo)
+
+```bash
+curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
 
