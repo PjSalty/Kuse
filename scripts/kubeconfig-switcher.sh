@@ -112,15 +112,13 @@ EOF
 
 # 7) On shell startup, auto-restore last cluster if no CURRENT_KUBE_FOLDER
 if [ -z "${CURRENT_KUBE_FOLDER:-}" ]; then
-  local state_file="${KCS_STATE_FILE:-$HOME/.kcs_current}"
+  state_file="${KCS_STATE_FILE:-$HOME/.kcs_current}"
   if [ -f "$state_file" ]; then
-    local last_folder
-    last_folder=$(<"$state_file")
+    last_folder="$(<"$state_file")"
     if [ -d "$KUBECONFIG_ROOT/$last_folder" ]; then
-      local restored
-      restored=$(find "$KUBECONFIG_ROOT/$last_folder" -maxdepth 1 \
+      restored="$(find "$KUBECONFIG_ROOT/$last_folder" -maxdepth 1 \
                    \( -name '*.kubeconfig' -o -name '*.yaml' -o -name '*.yml' \) \
-                   | head -n 1)
+                   | head -n 1)"
       if [ -n "$restored" ] && [ -f "$restored" ]; then
         export KUBECONFIG="$restored"
         export CURRENT_KUBE_FOLDER="$last_folder"
