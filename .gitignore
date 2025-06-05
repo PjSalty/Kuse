@@ -1,0 +1,13 @@
+# Ignore any local state or config if accidentally committed
+.kcs.env
+.kcs_current
+
+# macOS
+.DS_Store
+
+# Linux temp files
+*~
+
+# Vim swap files
+*.swp
+*.swo
