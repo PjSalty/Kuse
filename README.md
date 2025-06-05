@@ -46,7 +46,7 @@ A lightweight, self-contained shell tool to switch between multiple Kubernetes k
 - **Colored Prompt by Default**  
   - A helper script appends the active cluster name to your shell prompt in a uniquely hashed 256-color hue—no two clusters look the same.
 
-- **One-step Installer (No Git Required)**  
+- **One-step Installer**  
   - Install system-wide with:
     ```bash
     curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
