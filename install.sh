@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 #
 # install.sh
-# One‐step installer for kubeconfig‐switcher (“Kuse”).
-# This version clones the GitHub repo into /tmp, then installs from there,
-# so that `curl … | bash` works even if no local “scripts/” folder exists.
+# One‐step installer for kubeconfig‐switcher (“Kuse”), without requiring git.
+# It fetches the main branch as a tarball, extracts scripts/, then installs.
 #
 set -e
 
@@ -11,12 +10,13 @@ set -e
 # CONFIGURABLES
 ########################################
 
-# The GitHub repository URL:
-REPO_URL="https://github.com/PjSalty/Kuse.git"
-# Temporary location to clone into:
+# The GitHub “archive” URL for the main branch tarball:
+TARBALL_URL="https://codeload.github.com/PjSalty/Kuse/tar.gz/refs/heads/main"
+
+# Temporary directory to download and extract the tarball:
 TMP_DIR="$(mktemp -d /tmp/Kuse-install.XXXXXX)"
 
-# Default installation prefix (can be overridden via --prefix=)
+# Default installation prefix (override with --prefix=/somewhere if desired)
 PREFIX="/usr/local"
 # Derived paths:
 SHAREDIR="$PREFIX/share/kuse"
@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Recalculate derived paths in case PREFIX changed
+# Recompute derived paths if PREFIX changed
 SHAREDIR="$PREFIX/share/kuse"
 BINDIR="$PREFIX/bin"
 
@@ -57,14 +57,19 @@ echo "  Share dir: $SHAREDIR"
 echo "  Bin dir:   $BINDIR"
 echo
 
-# 1) Clone the repo into TMP_DIR
-echo "Cloning repository into temporary directory..."
-git clone --depth=1 "$REPO_URL" "$TMP_DIR" >/dev/null 2>&1 \
-  || {
-    echo "Error: failed to clone $REPO_URL"
-    exit 1
-  }
-echo "  -> Cloned to $TMP_DIR"
+# 1) Download and extract only the 'scripts/' directory from the tarball
+echo "Downloading and extracting repository tarball..."
+curl -sSL "$TARBALL_URL" | tar -xz -C "$TMP_DIR"
+# The tarball creates a top-level folder named "Kuse-main/"
+# We want to extract scripts/ from that folder
+REPO_ROOT="$TMP_DIR/Kuse-main"
+
+if [ ! -d "$REPO_ROOT/scripts" ]; then
+  echo "Error: failed to find scripts/ in the tarball"
+  rm -rf "$TMP_DIR"
+  exit 1
+fi
+echo "  -> Extracted to $REPO_ROOT"
 echo
 
 # 2) Create target directories
@@ -76,7 +81,7 @@ echo
 
 # 3) Copy scripts/ into SHAREDIR
 echo "Copying scripts to $SHAREDIR..."
-cp -r "$TMP_DIR/scripts/"* "$SHAREDIR/"
+cp -r "$REPO_ROOT/scripts/"* "$SHAREDIR/"
 chmod 0755 "$SHAREDIR"/*.sh
 echo "  -> Done."
 echo
@@ -147,7 +152,7 @@ case "$answer" in
     ;;
   * )
     echo "Skipping ~/.bashrc modification."
-    echo "Remember to add the following to your shell startup file (`~/.bashrc`):"
+    echo "Remember to add the following to your shell startup file (e.g. ~/.bashrc):"
     echo "  export KCS_CONFIG_FILE=\"\$HOME/.kcs.env\""
     echo "  source \"$SHAREDIR/kubeconfig-switcher.sh\""
     ;;
@@ -158,5 +163,5 @@ echo "Installation complete! You can now use 'kuse' from the command line."
 echo "Try:  kcs-list  or  kuse default"
 echo
 
-# 8) Clean up temporary clone
+# 8) Clean up temporary files
 rm -rf "$TMP_DIR"
