@@ -34,5 +34,5 @@ A small, self-contained Bash tool to switch between multiple kubeconfig files (o
 ### 1. One-step installer (curl | bash)
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh \
-  | sudo bash
+curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
+
