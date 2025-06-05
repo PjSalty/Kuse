@@ -1,38 +1,34 @@
 # Kuse
 
-A small, self-contained Bash tool to switch between multiple kubeconfig files (organized in named subdirectories).
+A lightweight shell tool to switch between multiple kubeconfig files organized in named subdirectories. After installation, simply drop each cluster’s kubeconfig into a folder under `~/.kube/configs/`, and use a single command to switch contexts.
+
+---
 
 ## Features
 
 - **Easy context switching**  
-  `kuse <cluster>` sets your `$KUBECONFIG` to the first `.kubeconfig` or `.yaml` file found in `$KUBECONFIG_ROOT/<cluster>`.  
-  `kuse default` clears `$KUBECONFIG`, falling back to `~/.kube/config` (or in-cluster defaults).
+  `kuse <cluster>` sets your `KUBECONFIG` to the first `*.kubeconfig`, `*.yaml`, or `*.yml` file found in `~/.kube/configs/<cluster>`.  
+  `kuse default` clears `KUBECONFIG`, falling back to `~/.kube/config`.
 
 - **Cluster inventory**  
-  `kcs-list` shows all available cluster folder names under your root directory.  
-  `kcs-current` displays which cluster (and exact file) is currently active.
+  - `kcs-list` shows all subdirectories under your kubeconfig root (default `~/.kube/configs`).  
+  - `kcs-current` displays which cluster (and exact file) is currently active.
 
-- **Tab completion**  
-  Installs a Bash-completion script so that typing `kuse <TAB>` will list “default” plus every folder name under `$KUBECONFIG_ROOT`.
+- **Shell-native tab completion**  
+  Installs completion scripts for **Bash**, **Zsh**, and **Fish**. Typing `kuse <TAB>` will list `default` plus each folder name under your kubeconfig root.
 
 - **Persistent state**  
-  Remembers your last-used cluster in `~/.kcs_current` (or a custom path via `KCS_STATE_FILE`). New shells auto-restore that context.
+  Remembers your last-used cluster in `~/.kcs_current`. New shells automatically restore that context.
 
-- **Optional 256-color prompt**  
-  If you source `prompt-kuse.sh`, your shell prompt will show the active cluster name in a uniquely hashed ANSI color (from the 216-color cube). No two clusters look the same.
+- **Automatic folder creation**  
+  The installer creates `~/.kube/configs` if it doesn’t already exist, so you can immediately drop kubeconfig files there.
 
-- **One-step install**  
-  A single `curl | sudo bash` (or `git clone && sudo make install`) drops all scripts into `/usr/local/share/kuse/` and places a `/usr/local/bin/kuse` wrapper in your `$PATH`, plus automatic Bash-completion integration.
+- **Colored prompt by default**  
+  A helper script injects the active cluster name into your shell prompt in a unique 256-color hue.
 
-- **Fully configurable**  
-  Override your kubeconfig root (`KUBECONFIG_ROOT`) and state file location (`KCS_STATE_FILE`) via a simple `~/.kcs.env` file. Sensible defaults:  
-  - `KUBECONFIG_ROOT="$HOME/.kube/configs"`  
-  - `KCS_STATE_FILE="$HOME/.kcs_current"`
-
-## Installation
-
-### 1. One-step installer (curl | bash)
-
-```bash
-curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
+- **One-step installer (no Git required)**  
+  ```bash
+  curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | sudo bash
+  # Or, to install under your home directory (no sudo):
+  curl -sSL https://raw.githubusercontent.com/PjSalty/Kuse/main/install.sh | bash -s -- --prefix="$HOME/.local"
 
