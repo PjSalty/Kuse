@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # install.sh
-# One‐step, non-interactive installer for kubeconfig‐switcher (“Kuse”), no further manual edits.
+# One-step, non-interactive installer for kubeconfig-switcher (“Kuse”), no further manual edits.
 #
 set -e
 
@@ -9,7 +9,7 @@ set -e
 # CONFIGURABLES
 ########################################
 
-# GitHub tarball URL for the main branch:
+# GitHub tarball URL for main branch:
 TARBALL_URL="https://codeload.github.com/PjSalty/Kuse/tar.gz/refs/heads/main"
 
 # Temporary directory to download and extract into:
@@ -129,14 +129,14 @@ echo
 # 7) Ensure ~/.kcs.env exists (create if missing)
 if [ ! -f "$HOME/.kcs.env" ]; then
   echo "# ~/.kcs.env: override defaults for kubeconfig-switcher" > "$HOME/.kcs.env"
-  echo "# export KUBECONFIG_ROOT=\"\$HOME/.kube/configs\"" >> "$HOME/.kcs.env"
-  echo "# export KCS_STATE_FILE=\"\$HOME/.kcs_current\"" >> "$HOME/.kcs.env"
+  echo "export KUBECONFIG_ROOT=\"\$HOME/.kube/configs\"" >> "$HOME/.kcs.env"
+  echo "export KCS_STATE_FILE=\"\$HOME/.kcs_current\"" >> "$HOME/.kcs.env"
   chmod 0644 "$HOME/.kcs.env"
   echo "Created default ~/.kcs.env"
 fi
 echo
 
-# 8) Append source lines to ~/.bashrc if not already present
+# 8) Append source lines to ~/.bashrc if not already present (and enable color prompt)
 BASHRC="$HOME/.bashrc"
 grep -qxF "# >>> kubeconfig-switcher >>>" "$BASHRC" 2>/dev/null || {
   {
@@ -144,12 +144,11 @@ grep -qxF "# >>> kubeconfig-switcher >>>" "$BASHRC" 2>/dev/null || {
     echo "# >>> kubeconfig-switcher >>>"
     echo "export KCS_CONFIG_FILE=\"\$HOME/.kcs.env\""
     echo "source \"$SHAREDIR/kubeconfig-switcher.sh\""
-    echo "# 'kuse' wrapper is at $BINDIR/kuse"
-    echo "# If you want the colored prompt, uncomment next line:"
-    echo "# source \"$SHAREDIR/prompt-kuse.sh\""
+    echo "# Enable colored prompt automatically:"
+    echo "source \"$SHAREDIR/prompt-kuse.sh\""
     echo "# <<< kubeconfig-switcher <<<"
   } >> "$BASHRC"
-  echo "Appended kubeconfig-switcher lines to $BASHRC"
+  echo "Appended kubeconfig-switcher lines (with color prompt) to $BASHRC"
 }
 echo
 
