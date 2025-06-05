@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 #
 # install.sh
-# One-step, non-interactive installer for kubeconfig-switcher (“Kuse”), no further manual edits.
+# One‐step, non‐interactive installer for kubeconfig‐switcher (“Kuse”),
+# automatically creating a default ~/.kube/configs directory for dropping kubeconfig files.
 #
 set -e
 
@@ -126,7 +127,7 @@ else
 fi
 echo
 
-# 7) Ensure ~/.kcs.env exists (create if missing)
+# 7) Ensure ~/.kcs.env exists (create with defaults if missing)
 if [ ! -f "$HOME/.kcs.env" ]; then
   echo "# ~/.kcs.env: override defaults for kubeconfig-switcher" > "$HOME/.kcs.env"
   echo "export KUBECONFIG_ROOT=\"\$HOME/.kube/configs\"" >> "$HOME/.kcs.env"
@@ -136,7 +137,15 @@ if [ ! -f "$HOME/.kcs.env" ]; then
 fi
 echo
 
-# 8) Append source lines to ~/.bashrc if not already present (and enable color prompt)
+# 8) Create default KUBECONFIG_ROOT directory (~/.kube/configs) if it doesn’t exist
+#     so the user can immediately drop their kubeconfig files there.
+#     $KUBECONFIG_ROOT is sourced from ~/.kcs.env (or default).
+source "$HOME/.kcs.env"
+mkdir -p "$KUBECONFIG_ROOT"
+echo "Ensured default KUBECONFIG_ROOT exists: $KUBECONFIG_ROOT"
+echo
+
+# 9) Append source lines to ~/.bashrc if not already present (and enable color prompt)
 BASHRC="$HOME/.bashrc"
 grep -qxF "# >>> kubeconfig-switcher >>>" "$BASHRC" 2>/dev/null || {
   {
@@ -152,11 +161,15 @@ grep -qxF "# >>> kubeconfig-switcher >>>" "$BASHRC" 2>/dev/null || {
 }
 echo
 
-# 9) Clean up temporary extraction directory
+# 10) Clean up temporary extraction directory
 rm -rf "$TMP_DIR"
 
 echo
 echo "Installation complete! Start a new shell or run 'source ~/.bashrc' to use 'kuse'."
+echo "Your default KUBECONFIG_ROOT is: $KUBECONFIG_ROOT"
+echo "You can drop your kubeconfig files under:"
+echo "    $KUBECONFIG_ROOT/<cluster-folder>/yourfile.kubeconfig"
+echo
 echo "Examples:"
 echo "  kcs-list"
 echo "  kuse <cluster-folder-name>"
