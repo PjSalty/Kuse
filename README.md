@@ -4,26 +4,6 @@ A lightweight, self-contained shell tool to switch between multiple Kubernetes k
 
 ---
 
-## Table of Contents
-
-- [Features](#features)
-- [Installation](#installation)
-  - [System-wide Install (with sudo)](#system-wide-install-with-sudo)
-  - [Home-directory-only Install (no sudo)](#home-directory-only-install-no-sudo)
-- [Post-install Configuration](#post-install-configuration)
-- [Usage](#usage)
-  - [Example Folder Layout](#example-folder-layout)
-  - [Built-in Commands](#built-in-commands)
-- [Tab-Completion](#tab-completion)
-- [Troubleshooting](#troubleshooting)
-- [Uninstall](#uninstall)
-- [Defaults & Configuration](#defaults--configuration)
-- [Updating](#updating)
-- [License](#license)
-- [Contributing](#contributing)
-
----
-
 ## Features
 
 - **Easy Context Switching**  
